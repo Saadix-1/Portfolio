@@ -1,58 +1,66 @@
 
-document.addEventListener("DOMContentLoaded", () => {
-    const navLinks = document.querySelectorAll(".nav-links a");
+document.addEventListener('DOMContentLoaded', () => {
+    /* Mobile Navigation */
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const links = document.querySelectorAll('.nav-links li');
 
-    navLinks.forEach(link => {
-        link.addEventListener("click", e => {
+    if (hamburger) {
+        hamburger.addEventListener('click', () => {
+            // Toggle Nav
+            navLinks.classList.toggle('open');
+            hamburger.classList.toggle('toggle');
+        });
+    }
+
+    /* Close mobile menu when clicking a link */
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            hamburger.classList.remove('toggle');
+        });
+    });
+
+    /* Smooth Scrolling with Header Offset */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const targetId = e.target.getAttribute("href").slice(1);
-            const targetElement = document.getElementById(targetId);
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                targetElement.scrollIntoView({ behavior: "smooth" });
+                // Header height is 80px, adding 20px padding
+                const headerOffset = 100; 
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
             }
         });
     });
 
-    const contactForm = document.getElementById("contact-form");
-    contactForm.addEventListener("submit", e => {
-        e.preventDefault();
-        alert("Thank you for reaching out! I'll get back to you soon.");
-        contactForm.reset();
+    /* Scroll Reveal Animation */
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('section').forEach(section => {
+        section.classList.add('hidden');
+        observer.observe(section);
     });
 });
-
-function Project({ title, link }) {
-    return (
-        <div className="project">
-            <h3>{title}</h3>
-            <a href={link} target="_blank" rel="noopener noreferrer">
-                Visit Project
-            </a>
-        </div>
-    );
-}
-
-function App() {
-    const projects = [
-        { title: "Project 1", link: "https://a353136d-f184-4452-a0f0-b2be0d32a8cc-00-3cnnqdie9eke9.riker.replit.dev/" },
-        { title: "Project 2", link: "https://275894e7-e969-4cd4-98b6-b8e614ae863a-00-12qvv74a715mi.worf.replit.dev/" },
-        { title: "Push Fitness", link: "https://push-fitness.netlify.app/" },
-        { title: "Project 4", link: "https://493822be-f670-4968-8f88-ffb0d24b5cbe-00-2z65dsuf9catr.kirk.replit.dev/" },
-        { title: "Project 5", link: "https://161a78db-40d5-4a7e-9bc2-f21de73b1c87-00-2m5wn5ambl5pi.spock.replit.dev/" },
-        { title: "Project 6", link: "https://f71b4255-97fb-41a6-ab63-a508c050eaf2-00-331p042n7sjl2.picard.replit.dev/#" }
-    ];
-
-    return (
-        <div className="projects">
-            <h2>My Projects</h2>
-            <div className="project-list">
-                {projects.map((project, index) => (
-                    <Project key={index} title={project.title} link={project.link} />
-                ))}
-            </div>
-        </div>
-    );
-}
-
-const root = document.getElementById("react-root");
-ReactDOM.render(<App />, root);
