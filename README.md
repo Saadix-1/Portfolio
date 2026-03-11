@@ -35,7 +35,7 @@ Open `index.html` in your browser to view the site locally.
 ### Method 2: The Professional Way (GitHub Integration)
 *Best for long-term maintenance. Updates automatically when you push code.*
 
-1. **Push this code to GitHub** (if not already done).
+1. **Push this code to GitHub** (if not already done).    
    ```bash
    git init
    git add .
